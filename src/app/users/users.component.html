@@ -1,0 +1,52 @@
+<header>
+  <h1>USER POSTS</h1>
+</header>
+<h2>Please select a user to find their comments:</h2>
+
+<ul class="user-list" *ngIf="users$ && !isFetching">
+  <li
+    *ngFor="let user of users$"
+    (click)="getUserPosts(user)"
+    [class.active]="userSelected === user"
+  >
+    <span>{{ user.name }}</span>
+  </li>
+  <div class="loader" *ngIf="isFetching"></div>
+</ul>
+
+<div class="blog-post" *ngIf="initialPosts$ | async as initialPosts">
+  <h2>Posts for {{ this.userSelected.name }}</h2>
+  <div *ngFor="let post of initialPosts; let i = index">
+    <div class="post-item">
+      <a routerLink="">{{ post.title }}</a>
+      <p>{{ post.body }}</p>
+    </div>
+    <div
+      class="icon"
+      (click)="getPComments(post)"
+      [class.collapse]="postSelected === post"
+    ></div>
+    <div
+      class="post-comments"
+      *ngIf="postComments$ && !isFetching && postSelected === post"
+    >
+      <div class="comments-body" *ngFor="let comment of postComments$">
+        <ng-container>
+          <div>{{ comment.body }}</div>
+          <div><strong>Email:</strong> {{ comment.email }}</div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="loader" *ngIf="isFetching && postSelected === post"></div>
+  </div>
+
+  <div class="action-container" *ngIf="initialPosts$ | async as initialPosts">
+    <button
+      class="btn-primary"
+      *ngIf="initialPosts && initialPosts.length === 3"
+      (click)="getUserAllPosts(userSelected.id)"
+    >
+      Load All
+    </button>
+  </div>
+</div>
